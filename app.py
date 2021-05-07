@@ -3,6 +3,7 @@ import os
 
 import psycopg2
 from flask import Flask, request
+from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -11,6 +12,13 @@ TABLE_NAME = os.environ.get("TABLE_NAME", "users")
 conn = psycopg2.connect(DATABASE_URL, options=f"-c search_path={SCHEMA_NAME}")
 
 root = Flask(__name__)
+
+
+@root.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
+    return str(e), 500
 
 
 @root.route("/")
