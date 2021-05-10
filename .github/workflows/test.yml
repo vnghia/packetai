@@ -1,0 +1,25 @@
+name: GitHub CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  API_ENDPOINT: http://localhost:5000
+
+jobs:
+  test-api:
+    name: Test API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test API
+        run: |
+          docker-compose up -d
+          sleep 5
+          python3 -m pip install -r test-requirements.txt
+          python3 -m pytest test.py
